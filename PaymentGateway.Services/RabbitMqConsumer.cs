@@ -15,30 +15,89 @@ namespace PaymentGateway.Services
         private readonly IConnection _connection;
         private readonly IModel _channel;
         private readonly AppDbContext _dbContext;
-
+        private bool _disposed;
 
         public RabbitMqConsumer(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: "payment_events", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            var factory = new ConnectionFactory() { 
+                HostName = "localhost",
+                UserName = "guest",     // Default username
+                Password = "guest"      // Default password
+            };
+            try
+            {
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
+                _channel.QueueDeclare(queue: "payment_events", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Failed to initialize RabbitMQ connection: {ex.Message}");
+                throw;
+            }
+            
         }
 
         public void StartConsuming()
         {
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += async (model, ea) =>
+            if (_disposed)
             {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"Received: {message}");
+                throw new ObjectDisposedException(nameof(RabbitMqConsumer));
+            }
+            try
+            {
+                // Create an instance of EventingBasicConsumer
+                var consumer = new EventingBasicConsumer(_channel);
 
-                // Update database based on message
-                await UpdateTransactionStatusAsync(message);
-            };
-            _channel.BasicConsume(queue: "payment_events", autoAck: true, consumer: consumer);
+                // Define the event handler for when a message is received
+                consumer.Received += async (model, ea) =>
+                {
+                    try
+                    {
+                        var body = ea.Body.ToArray();
+                        var message = Encoding.UTF8.GetString(body);
+                        Console.WriteLine($"Received: {message}");
+
+                        // Update database based on message
+                        await UpdateTransactionStatusAsync(message);
+
+                        // Acknowledge the message
+                        _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error processing message: {ex.Message}");
+
+                        // Optionally, reject the message if processing fails
+                        // _channel.BasicReject(deliveryTag: ea.DeliveryTag, requeue: true);
+                    }
+                };
+
+                // Start consuming messages from the queue
+                _channel.BasicConsume(queue: "payment_events",
+                                      autoAck: false, // Set to false to manually acknowledge messages
+                                      consumer: consumer);
+
+                Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            //var consumer = new EventingBasicConsumer(_channel);
+            //consumer.Received += async (model, ea) =>
+            //{
+            //    var body = ea.Body.ToArray();
+            //    var message = Encoding.UTF8.GetString(body);
+            //    Console.WriteLine($"Received: {message}");
+
+            //    // Update database based on message
+            //    await UpdateTransactionStatusAsync(message);
+            //};
+            //_channel.BasicConsume(queue: "payment_events", autoAck: true, consumer: consumer);
         }
 
         private async Task UpdateTransactionStatusAsync(string message)
@@ -58,6 +117,27 @@ namespace PaymentGateway.Services
             }
         }
 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _channel?.Close();
+                    _connection?.Close();
+                    _channel?.Dispose();
+                    _connection?.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
     }
 }

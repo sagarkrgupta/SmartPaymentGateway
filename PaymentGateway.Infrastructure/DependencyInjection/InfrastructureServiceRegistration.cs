@@ -16,8 +16,7 @@ namespace PaymentGateway.Infrastructure.DependencyInjection
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source=PaymentDb.sqlite"));
 
-            services.AddSingleton<RabbitMqPublisher>();
-            services.AddSingleton<RabbitMqConsumer>();
+           
 
             return services;
         }
