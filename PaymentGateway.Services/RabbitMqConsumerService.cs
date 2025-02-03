@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using PaymentGateway.Common.Enums;
@@ -20,8 +21,9 @@ namespace PaymentGateway.Services
 
         public RabbitMqConsumerService(IServiceProvider serviceProvider)
         {
-           
-            var factory = new ConnectionFactory { HostName = "localhost" };
+            _serviceProvider = serviceProvider;
+
+             var factory = new ConnectionFactory { HostName = "localhost" };
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
@@ -52,10 +54,10 @@ namespace PaymentGateway.Services
 
                 if (eventData["EventType"] == "payment_initiated")
                 {
-                    var transactionId = eventData["TransactionId"];
+                    var transactionId = Guid.Parse(eventData["TransactionId"]);
                     Console.WriteLine($"Payment initiated: {transactionId}");
 
-                    // Simulate delayed response from mock API
+                    
                     await Task.Delay(5000); // Simulate 5-second delay
 
                     // Create a new scope to resolve AppDbContext
@@ -64,7 +66,7 @@ namespace PaymentGateway.Services
                         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                         // Update transaction status in DB
-                        var transaction = await dbContext.Transactions.FindAsync(transactionId);
+                        var transaction =  await dbContext.Transactions.FirstOrDefaultAsync(x=> x.TransactionID == transactionId);
                         if (transaction != null)
                         {
                             transaction.Status = (int)MockPaymentStatusEnum.Completed; // Simulated final status
@@ -72,13 +74,7 @@ namespace PaymentGateway.Services
                         }
                     }
 
-                    //// Update transaction status in DB
-                    //var transaction = await _dbContext.Transactions.FindAsync(transactionId);
-                    //if (transaction != null)
-                    //{
-                    //    transaction.Status = (int)MockPaymentStatusEnum.Completed; // Simulated final status
-                    //    await _dbContext.SaveChangesAsync();
-                    //}
+                    
                 }
             }
             catch (Exception ex)

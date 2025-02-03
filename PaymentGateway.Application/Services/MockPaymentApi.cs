@@ -11,18 +11,22 @@ namespace PaymentGateway.Services.MockAPI
 {
     public class MockPaymentApi : IMockPaymentApi
     {
+        private static readonly Random _random = new Random();
         public async Task<PaymentResponseDto> ProcessPaymentAsync(Guid transactionId, PaymentRequestDto request)
         {
             // Simulate delay (e.g., 3 seconds)
             await Task.Delay(3000);
 
             // Simulate random status (success, pending, failed)            
-            var random = new Random();
-            var status = random.Next(3) switch
+            // Generate a random integer between 0 and 3 (inclusive)
+            var randomValue = Random.Shared.Next(4);
+
+            var status = randomValue switch
             {
                 0 => MockPaymentStatusEnum.Success,
                 1 => MockPaymentStatusEnum.Pending,
-                _ => MockPaymentStatusEnum.Failed
+                2 => MockPaymentStatusEnum.Failed,
+                _ => MockPaymentStatusEnum.Unknown // Fallback for unexpected values
             };
 
             return new PaymentResponseDto
@@ -30,6 +34,12 @@ namespace PaymentGateway.Services.MockAPI
                 TransactionId = transactionId,
                 Status = status
             };
+        }
+
+        public int GetRandomValue()
+        {
+            
+            return Random.Shared.Next(4); 
         }
     }
 }

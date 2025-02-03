@@ -11,6 +11,7 @@ namespace PaymentGateway.Common.Enums
         Failed = 0,
         Success = 1,
         Pending = 2,
-        Completed = 3
+        Completed = 3,
+        Unknown = 4
     }
 }

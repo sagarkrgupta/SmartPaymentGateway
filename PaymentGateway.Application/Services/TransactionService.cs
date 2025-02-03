@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PaymentGateway.Application.Dtos;
 using PaymentGateway.Application.Interfaces;
+using PaymentGateway.Common.Enums;
 using PaymentGateway.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace PaymentGateway.Application.Services
                 UserID = t.UserID,
                 Amount = t.Amount,
                 Currency = t.Currency,
-                Status = t.Status,
+                Status = (MockPaymentStatusEnum)t.Status,
                 Timestamp = t.Timestamp,
                 CustomerEmail = t.CustomerEmail,
                 PaymentMethod = t.PaymentMethod,

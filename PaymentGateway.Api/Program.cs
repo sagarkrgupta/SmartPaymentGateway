@@ -23,7 +23,17 @@ builder.Services.AddSwaggerGen(c =>
     
 });
 
-// Add Serilog
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()      // Allows any origin
+              .AllowAnyMethod()      // Allows any HTTP method (GET, POST, etc.)
+              .AllowAnyHeader();     // Allows any header
+    });
+});
+
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -71,6 +81,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartPaymentGateway API");   
 });
 
+app.UseCors("AllowAllOrigins");
 
 
 try

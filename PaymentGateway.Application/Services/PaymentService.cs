@@ -20,10 +20,11 @@ namespace PaymentGateway.Application.Services
         private readonly IMockPaymentApi _mockApi;
 
 
-        public PaymentService(AppDbContext dbContext, IRabbitMqPublisher rabbitMqPublisher)
+        public PaymentService(AppDbContext dbContext, IRabbitMqPublisher rabbitMqPublisher, IMockPaymentApi mockApi)
         {
             _dbContext = dbContext;
             _rabbitMqPublisher = rabbitMqPublisher;
+            _mockApi = mockApi;
         }
 
         public async Task<object> ProcessPayment(PaymentRequestDto request)
