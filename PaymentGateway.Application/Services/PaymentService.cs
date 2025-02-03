@@ -27,7 +27,7 @@ namespace PaymentGateway.Application.Services
             _mockApi = mockApi;
         }
 
-        public async Task<object> ProcessPayment(PaymentRequestDto request)
+        public async Task<dynamic> ProcessPayment(PaymentRequestDto request)
         {
             await Task.Delay(3000); // Simulate delay
 

@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{0C202983-3F4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1FE3BB7D-2160-4D07-A6A4-142B907E527D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway.Api.Test", "SmartPaymentGateway.Api.Test\PaymentGateway.Api.Test.csproj", "{179FDFF1-A640-4DFD-BFF6-98EA7AB4F64B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{8F8243F6-957B-4798-B672-994EBAAC9943}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F8243F6-957B-4798-B672-994EBAAC9943}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F8243F6-957B-4798-B672-994EBAAC9943}.Release|Any CPU.Build.0 = Release|Any CPU
+		{179FDFF1-A640-4DFD-BFF6-98EA7AB4F64B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{179FDFF1-A640-4DFD-BFF6-98EA7AB4F64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{179FDFF1-A640-4DFD-BFF6-98EA7AB4F64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{179FDFF1-A640-4DFD-BFF6-98EA7AB4F64B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,5 +87,6 @@ Global
 		{0F472D1C-E66C-4EF2-9A2E-6738C65A0E87} = {1164FBCA-33BF-4DEF-A12F-73395A6B3CA8}
 		{682FCBAA-C27B-4B26-AF1F-44AA7203C01F} = {1164FBCA-33BF-4DEF-A12F-73395A6B3CA8}
 		{8F8243F6-957B-4798-B672-994EBAAC9943} = {1164FBCA-33BF-4DEF-A12F-73395A6B3CA8}
+		{179FDFF1-A640-4DFD-BFF6-98EA7AB4F64B} = {C4966DAE-6E26-46BA-811D-469E9A8895B2}
 	EndGlobalSection
 EndGlobal

@@ -35,7 +35,7 @@ Before running the API, ensure you have the following installed:
 - [.NET SDK 9+](https://dotnet.microsoft.com/download)
 - A code editor (e.g., [Visual Studio Code](https://code.visualstudio.com/) or [Visual Studio](https://visualstudio.microsoft.com/))
 - [Postman](https://www.postman.com/) or any other API testing tool (optional)
-
+- [rabbitmq:management]
 ---
 
 ## Getting Started

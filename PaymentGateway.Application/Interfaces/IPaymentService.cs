@@ -9,6 +9,6 @@ namespace PaymentGateway.Application.Interfaces
 {
     public interface IPaymentService
     {
-        Task<object> ProcessPayment(PaymentRequestDto request);
+        Task<dynamic> ProcessPayment(PaymentRequestDto request);
     }
 }
