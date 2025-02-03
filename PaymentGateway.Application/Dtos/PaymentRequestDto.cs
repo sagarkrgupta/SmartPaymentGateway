@@ -13,5 +13,7 @@ namespace PaymentGateway.Application.Dtos
         public string CardNumber { get; set; }
         public string CustomerName { get; set; }
         public string Email { get; set; }
+        public string PaymentMethod { get; set; } // e.g., "card", "bank_transfer"
+        public string CardOrAccountDetails { get; set; } // Dummy validation
     }
 }

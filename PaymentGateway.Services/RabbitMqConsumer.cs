@@ -7,19 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using PaymentGateway.Common.Enums;
 
 namespace PaymentGateway.Services
 {
     public class RabbitMqConsumer : IDisposable
     {
+        private readonly AppDbContext _dbContext;
+        private readonly IServiceProvider _serviceProvider;        
         private readonly IConnection _connection;
         private readonly IModel _channel;
-        private readonly AppDbContext _dbContext;
         private bool _disposed;
 
         public RabbitMqConsumer(AppDbContext dbContext)
         {
             _dbContext = dbContext;
+           // _serviceProvider = serviceProvider;
             var factory = new ConnectionFactory() { 
                 HostName = "localhost",
                 UserName = "guest",     // Default username
@@ -87,17 +92,7 @@ namespace PaymentGateway.Services
 
                 throw;
             }
-            //var consumer = new EventingBasicConsumer(_channel);
-            //consumer.Received += async (model, ea) =>
-            //{
-            //    var body = ea.Body.ToArray();
-            //    var message = Encoding.UTF8.GetString(body);
-            //    Console.WriteLine($"Received: {message}");
-
-            //    // Update database based on message
-            //    await UpdateTransactionStatusAsync(message);
-            //};
-            //_channel.BasicConsume(queue: "payment_events", autoAck: true, consumer: consumer);
+            
         }
 
         private async Task UpdateTransactionStatusAsync(string message)
@@ -111,9 +106,21 @@ namespace PaymentGateway.Services
                 var transaction = await _dbContext.Transactions.FindAsync(transactionId);
                 if (transaction != null)
                 {
-                    transaction.Status = parts[1];
+                    transaction.Status = (int)MockPaymentStatusEnum.Success;
                     await _dbContext.SaveChangesAsync();
                 }
+
+                //using (var scope = _serviceProvider.CreateScope())
+                //{
+                //    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                //    var transaction = await dbContext.Transactions.FindAsync(transactionId);
+                //    if (transaction != null)
+                //    {
+                //        transaction.Status = parts[1];
+                //        await dbContext.SaveChangesAsync();
+                //    }
+                //}
+
             }
         }
 

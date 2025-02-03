@@ -15,7 +15,7 @@ namespace PaymentGateway.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string status, [FromQuery] int? userId)
+        public async Task<IActionResult> GetTransactions([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int? status, [FromQuery] int? userId)
         {
             var transactions = await _transactionService.GetTransactions(startDate, endDate, status, userId);
             return Ok(transactions);

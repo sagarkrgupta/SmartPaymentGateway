@@ -11,8 +11,10 @@ namespace PaymentGateway.Services.DependencyInjection
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<RabbitMqPublisher>();
-            services.AddSingleton<RabbitMqConsumer>();
+            services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+            //services.AddScoped<RabbitMqConsumer>();
+
+            services.AddHostedService<RabbitMqConsumerService>();
 
             return services;
         }

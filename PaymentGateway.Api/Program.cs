@@ -8,32 +8,20 @@ using PaymentGateway.Application.DependencyInjection;
 using PaymentGateway.Infrastructure.DependencyInjection;
 using System.Text;
 using Serilog;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-// Add services to the container.
-builder.Services.AddControllers();
-// Add JWT Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    });
-
-builder.Services.AddAuthorization();
+// Register the Swagger generator, defining one or more Swagger documents
+builder.Services.AddSwaggerGen(c =>
+{
+    
+});
 
 // Add Serilog
 
@@ -44,24 +32,18 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day) // Log to a file
     .CreateLogger();
 
-// Add RabbitMQ
-builder.Services.AddSingleton<RabbitMqPublisher>();
-builder.Services.AddSingleton<RabbitMqConsumer>();
-// Add DbContext
-builder.Services.AddDbContext<AppDbContext>();
+// Add Infrastructure Services
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Add Application Services
 builder.Services.AddApplicationServices();
 
-// Add Infrastructure Services
-builder.Services.AddInfrastructureServices();
-
 // Add Services
 builder.Services.AddServices();
 
-// Add Token Service
-builder.Services.AddTokenService(builder.Configuration["Jwt:Key"], builder.Configuration["Jwt:Issuer"], builder.Configuration["Jwt:Audience"]);
 
+// Add services to the container.
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -75,15 +57,21 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 
 app.MapControllers();
 
-// Start RabbitMQ consumer
-var rabbitMqConsumer = app.Services.GetRequiredService<RabbitMqConsumer>();
-rabbitMqConsumer.StartConsuming();
+// Enable middleware to serve generated Swagger as a JSON endpoint.
+app.UseSwagger();
+//app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartPaymentGateway API");   
+});
+
+
 
 try
 {

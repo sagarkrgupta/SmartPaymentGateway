@@ -8,11 +8,15 @@ namespace PaymentGateway.Domain.Entities
 {
     public class Transaction
     {
-        public int TransactionID { get; set; }
+        public int Id { get; set; }
+        public Guid TransactionID { get; set; }
         public int UserID { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; }
-        public string Status { get; set; } // "Pending", "Success", "Failed"
+        public int Status { get; set; } // "Pending", "Success", "Failed"
         public DateTime Timestamp { get; set; }
+        public string CustomerEmail { get; set; }
+        public string PaymentMethod { get; set; } // e.g., "card", "bank_transfer"
+        public string CardOrAccountDetails { get; set; }
     }
 }

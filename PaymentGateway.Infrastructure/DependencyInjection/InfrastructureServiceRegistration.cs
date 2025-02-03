@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PaymentGateway.Infrastructure.Data;
 using System;
@@ -11,12 +12,11 @@ namespace PaymentGateway.Infrastructure.DependencyInjection
 {
     public static class InfrastructureServiceRegistration
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Add DbContext
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite("Data Source=PaymentDb.sqlite"));
-
-           
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             return services;
         }

@@ -9,6 +9,6 @@ namespace PaymentGateway.Application.Interfaces
 {
     public interface ITransactionService
     {
-        Task<IEnumerable<TransactionDto>> GetTransactions(DateTime? startDate, DateTime? endDate, string status, int? userId);
+        Task<IEnumerable<TransactionDto>> GetTransactions(DateTime? startDate, DateTime? endDate, int? status, int? userId);
     }
 }
